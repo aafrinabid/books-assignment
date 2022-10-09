@@ -10,11 +10,22 @@ const app = express();
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
+interface Author {
+  email:string,
+  firstname:string,
+  lastname:string
+ }
 
-const results:{title:string,ibn:string,authors:string[],description:string,published:string,username:string}[]=[]
-const authors:{email:string,firstname:string,lastname:string}[]=[]
-const magazines:{title:string,ibn:string,authors:string[],published:string,description:string,username:string}[]=[]
-let totalBooks:{title:string,ibn:string,authors:string,description:string,published:string}[]=[]
+ interface Books{
+  title:string,ibn:string,authors:string[],description:string,published:string,username:string
+
+ }
+
+
+const results:Books[]=[]
+const authors:Author[]=[]
+const magazines:Books[]=[]
+let totalBooks:Books[]=[]
 
 const parser = parse({
     delimiter: ';'
@@ -40,7 +51,7 @@ fs.createReadStream('./Data/books.csv')
   if(data[0]==='title'){
 
   }else{
-    const details:{ibn:string,title:string,username:string,authors:string[],description:string,published:string}={
+    const details:Books={
       ibn:data[1],
       title:data[0],
         authors:data[2].split(','),
@@ -61,7 +72,7 @@ fs.createReadStream('./Data/authors.csv')
   if(data[0]==='email'){
 
   }else{
-    const details:{email:string,firstname:string,lastname:string}={
+    const details:Author={
       email:data[0],
       firstname:data[1],
       lastname:data[2],
@@ -78,7 +89,7 @@ fs.createReadStream('./Data/magazines.csv')
   if(data[2]==='authors'){
 
   }else{
-    const details:{ibn:string,title:string,authors:string[],username:string,published:string,description:string}={
+    const details:Books={
       ibn:data[1],
       title:data[0],
       authors:data[2].split(','),
@@ -96,11 +107,6 @@ fs.createReadStream('./Data/magazines.csv')
 
 
 
- interface Author {
-  email:string,
-  firstname:string,
-  lastname:string
- }
 
 app.get('/allItems',async(req:Request,res:Response)=>{
   try{

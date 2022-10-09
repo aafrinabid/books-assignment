@@ -95,7 +95,6 @@ fs_1.default.createReadStream('./Data/authors.csv')
     }
 })
     .on('end', () => { });
-// .on('error',(e:any)=>console.log(e))
 fs_1.default.createReadStream('./Data/magazines.csv')
     .pipe(magazineParser)
     .on('data', (data) => {
@@ -168,8 +167,6 @@ app.post('/profileInfo', (req, res) => __awaiter(void 0, void 0, void 0, functio
                 return Object.assign(Object.assign({}, e), { username });
             }
         });
-        console.log(userDetails, 'dimmmmmmmmmmmmmmmmm');
-        // const userData=books.filter(e=>e!==undefined)1
         res.json(userDetails);
     }
     catch (_a) {
@@ -177,7 +174,6 @@ app.post('/profileInfo', (req, res) => __awaiter(void 0, void 0, void 0, functio
 }));
 app.post('/getIsbnData', (req, res) => {
     try {
-        console.log('inside isbn query', req.body);
         const { isbn } = req.body;
         const totalBooks = [...results, ...magazines];
         const requiredData = totalBooks.filter(book => book.ibn === isbn);

@@ -71,7 +71,6 @@ fs.createReadStream('./Data/authors.csv')
   }
 })
 .on('end',()=>{})
-// .on('error',(e:any)=>console.log(e))
 
 fs.createReadStream('./Data/magazines.csv')
 .pipe(magazineParser)
@@ -168,8 +167,6 @@ try{
    
    
   })
-  console.log(userDetails,'dimmmmmmmmmmmmmmmmm')
-  // const userData=books.filter(e=>e!==undefined)1
   res.json(userDetails)
 
 }catch{
@@ -179,7 +176,6 @@ try{
 
 app.post('/getIsbnData',(req:Request,res:Response)=>{
   try{
-    console.log('inside isbn query',req.body)
     const {isbn}=req.body;
     const totalBooks=[...results,...magazines]
     const requiredData=totalBooks.filter(book=>book.ibn===isbn)

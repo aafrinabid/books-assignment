@@ -177,6 +177,34 @@ try{
 }
 })
 
+app.post('/getIsbnData',(req:Request,res:Response)=>{
+  try{
+    console.log('inside isbn query',req.body)
+    const {isbn}=req.body;
+    const totalBooks=[...results,...magazines]
+    const requiredData=totalBooks.filter(book=>book.ibn===isbn)
+    let usernameArray:Author[]=[]
+    const books=requiredData.map(e=>{
+      e.authors.map(ele=>{
+       const fileredData= authors.find(author=>author.email===ele)
+       if(fileredData!==undefined){
+        usernameArray.push(fileredData)
+       }
+      })
+      const username=usernameArray.map(e=>{
+        const username=`${e.firstname} ${e.lastname}`
+        return username
+      })
+      usernameArray=[]
+      return {...e,username}
+  
+    })
+    res.json(books)
+
+  }catch{
+
+  }
+})
 
 app.listen(3500,()=>{
   console.log('listeneding on 3500')

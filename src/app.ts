@@ -1,11 +1,11 @@
-// const stripBom = require('strip-bom-stream');
-// import {stripBom} from 'strip-bom-stream'
+import * as dotenv from "dotenv";
+dotenv.config()
 import {parse} from 'csv-parse'
 import express from 'express'
 import {Request,Response} from "express"
 import cors from 'cors'
 import  fs from 'fs';
-
+const PORT=process.env.PORT || 5000
 const app = express();
 app.use(cors())
 app.use(express.json())
@@ -34,7 +34,7 @@ const parser = parse({
  
 
 
-fs.createReadStream('./data/books.csv')
+fs.createReadStream('./Data/books.csv')
 .pipe(bookParser)
 .on('data',(data:any)=>{
   if(data[0]==='title'){
@@ -55,7 +55,7 @@ fs.createReadStream('./data/books.csv')
 .on('end',()=>{})
 .on('error',(e:any)=>console.log(e))
 
-fs.createReadStream('./data/authors.csv')
+fs.createReadStream('./Data/authors.csv')
 .pipe(parser)
 .on('data',(data:any)=>{
   if(data[0]==='email'){
@@ -73,7 +73,7 @@ fs.createReadStream('./data/authors.csv')
 .on('end',()=>{})
 // .on('error',(e:any)=>console.log(e))
 
-fs.createReadStream('./data/magazines.csv')
+fs.createReadStream('./Data/magazines.csv')
 .pipe(magazineParser)
 .on('data',(data:any)=>{
   if(data[2]==='authors'){
@@ -206,6 +206,6 @@ app.post('/getIsbnData',(req:Request,res:Response)=>{
   }
 })
 
-app.listen(3500,()=>{
-  console.log('listeneding on 3500')
+app.listen(PORT,()=>{
+  console.log('listeneding on',PORT)
 })

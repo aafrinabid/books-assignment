@@ -34,7 +34,7 @@ const parser = parse({
  
 
 
-fs.createReadStream('books.csv')
+fs.createReadStream('./data/books.csv')
 .pipe(bookParser)
 .on('data',(data:any)=>{
   if(data[0]==='title'){
@@ -55,7 +55,7 @@ fs.createReadStream('books.csv')
 .on('end',()=>{})
 .on('error',(e:any)=>console.log(e))
 
-fs.createReadStream('authors.csv')
+fs.createReadStream('./data/authors.csv')
 .pipe(parser)
 .on('data',(data:any)=>{
   if(data[0]==='email'){
@@ -73,7 +73,7 @@ fs.createReadStream('authors.csv')
 .on('end',()=>{})
 // .on('error',(e:any)=>console.log(e))
 
-fs.createReadStream('magazines.csv')
+fs.createReadStream('./data/magazines.csv')
 .pipe(magazineParser)
 .on('data',(data:any)=>{
   if(data[2]==='authors'){

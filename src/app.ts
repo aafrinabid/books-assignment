@@ -11,9 +11,9 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
-const results:{title:string,ibn:string,authors:string,description:string,published:string}[]=[]
+const results:{title:string,ibn:string,authors:string[],description:string,published:string,username:string}[]=[]
 const authors:{email:string,firstname:string,lastname:string}[]=[]
-const magazines:{title:string,ibn:string,authors:string,published:string,description:string}[]=[]
+const magazines:{title:string,ibn:string,authors:string[],published:string,description:string,username:string}[]=[]
 let totalBooks:{title:string,ibn:string,authors:string,description:string,published:string}[]=[]
 
 const parser = parse({
@@ -40,12 +40,13 @@ fs.createReadStream('books.csv')
   if(data[0]==='title'){
 
   }else{
-    const details:{ibn:string,title:string,authors:string,description:string,published:string}={
+    const details:{ibn:string,title:string,username:string,authors:string[],description:string,published:string}={
       ibn:data[1],
       title:data[0],
-        authors:data[2],
+        authors:data[2].split(','),
         description:data[3],
-        published:''
+        published:'',
+        username:''
     }
     results.push(details)
 
@@ -78,12 +79,13 @@ fs.createReadStream('magazines.csv')
   if(data[2]==='authors'){
 
   }else{
-    const details:{ibn:string,title:string,authors:string,published:string,description:string}={
+    const details:{ibn:string,title:string,authors:string[],username:string,published:string,description:string}={
       ibn:data[1],
       title:data[0],
-      authors:data[2],
+      authors:data[2].split(','),
       published:data[3],
-      description:''
+      description:'',
+      username:''
   }
   magazines.push(details)
 
@@ -95,27 +97,85 @@ fs.createReadStream('magazines.csv')
 
 
 
+ interface Author {
+  email:string,
+  firstname:string,
+  lastname:string
+ }
+
 app.get('/allItems',async(req:Request,res:Response)=>{
   try{
     const totalBooks=[...results,...magazines]
+    let usernameArray:Author[]=[]
     const books=totalBooks.map(e=>{
-      const authorData=authors.find(ele=>ele.email==e.authors)
-      if(authorData!==undefined){
-      const username=`${authorData.firstname} ${authorData.lastname}`
+      e.authors.map(ele=>{
+       const fileredData= authors.find(author=>author.email===ele)
+       if(fileredData!==undefined){
+        usernameArray.push(fileredData)
+       }
+      })
+      const username=usernameArray.map(e=>{
+        const username=`${e.firstname} ${e.lastname}`
+        return username
+      })
+      usernameArray=[]
       return {...e,username}
   
-      }else{
-      return {...e}
-  
-      }
+     
     })
     res.json(books)
+  
   }catch(e){
 console.log(e)
   }
 
-})
+}
+)
 
+app.post('/profileInfo',async(req:Request,res:Response)=>{
+try{
+  const totalBooks=[...results,...magazines]
+  const id=req.body.id
+  let userDetails:any=[]
+  let usernameArray:Author[]=[]
+  const books=totalBooks.map(e=>{
+    let isUser
+    const contains=e.authors.includes(id)
+    if(contains){
+ e.authors.map(ele=>{
+      isUser=ele===id?true:false
+      if(isUser){
+        const fileredData= authors.find(author=>author.email===ele)
+     if(fileredData!==undefined){
+      usernameArray.push(fileredData)
+     }
+
+      }
+     
+    })
+   
+      const username=usernameArray.map(e=>{
+        const username=`${e.firstname} ${e.lastname}`
+        return username
+      })
+      usernameArray=[]
+      userDetails.push({...e,username})
+      return {...e,username}
+  
+
+   
+    }
+   
+   
+  })
+  console.log(userDetails,'dimmmmmmmmmmmmmmmmm')
+  // const userData=books.filter(e=>e!==undefined)1
+  res.json(userDetails)
+
+}catch{
+
+}
+})
 
 
 app.listen(3500,()=>{
